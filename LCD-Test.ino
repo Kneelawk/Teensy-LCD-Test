@@ -1,3 +1,7 @@
+#include <CoopThreads.h>
+
+CoopThreads<8192> threads(8);
+
 void setup() {
   // setup LCD control pins
   pinMode(30, OUTPUT); // Reg Select
@@ -16,16 +20,16 @@ void setup() {
   // configure LCD
   digitalWriteFast(30, LOW);
   digitalWriteFast(31, LOW);
-  delay(40); // wait for LCD to power up
+  threads.delay(40); // wait for LCD to power up
   lcdPut(0x30); // wake up
-  delay(5); // wait
+  threads.delay(5); // wait
   lcdPut(0x30); // Wake Up
-  delayMicroseconds(160);
+  threads.delayMicroseconds(160);
   lcdPut(0x30); // WAKE UP
-  delayMicroseconds(160);
+  threads.delayMicroseconds(160);
   lcdPut(0x38); // set display mode
   lcdPut(0x01); // clear display
-  delay(3);
+  threads.delay(3);
   lcdPut(0x0C); // display on, cursor on
   lcdPut(0x06); // entry mode setup
 
@@ -53,9 +57,9 @@ void loop() {
 void lcdPut(uint8_t c) {
   digitalWriteReg6Shift(0xFF, c, 16);
   digitalWriteFast(31, HIGH);
-  delayNanoseconds(500);
+  threads.delayNanoseconds(500);
   digitalWriteFast(31, LOW);
-  delayMicroseconds(60);
+  threads.delayMicroseconds(60);
 }
 
 // Writes data to the 6th register all at once with the specified bitshift
